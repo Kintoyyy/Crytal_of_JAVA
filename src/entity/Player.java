@@ -134,10 +134,13 @@ public class Player extends Entity {
 
         int objIndex = gp.collisionChecker.checkObject(this, true);
 
+        if(objIndex < 10){
+            System.out.println( gp.obj[objIndex].prompts[1] );
+
+        }
+
         int npcIndex = gp.collisionChecker.checkNpc(this, true);
-
 //        int objectNear = gp.collisionChecker.checkNearbyObject(this, true, 5);
-
 //        System.out.println(objectNear);
 
         if (!collissionOn) {

@@ -12,6 +12,7 @@ public class SuperObject {
     public int worldX, worldY;
     public Rectangle solidArea = new Rectangle(0,0,48,48);
     public int SCALE = 1;
+    public String[] prompts = new String[5];
 
     public void setSolidArea(int x, int y, int width, int height) {
         solidArea.x = x;
@@ -35,8 +36,6 @@ public class SuperObject {
             // Draw the tile on the screen
             g2.drawImage(image, (int) screenX, (int) screenY, (int) scaledTileSize, (int) scaledTileSize, null);
         }
-
-
 
 
         if (gp.DEBUG_MODE) {

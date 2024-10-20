@@ -101,7 +101,7 @@ public class CollisionChecker {
                 if (entity.solidArea.intersects(new Rectangle(objSolidAreaX, objSolidAreaY, gp.obj[i].solidArea.width, gp.obj[i].solidArea.height))) {
                     if (gp.obj[i].collision) {
                         entity.collissionOn = true;
-                        System.out.println(gp.obj[i].name);
+//                        System.out.println(gp.obj[i].name);
                     }
                     if (player) {
                         index = i;
