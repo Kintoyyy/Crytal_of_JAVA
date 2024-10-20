@@ -13,11 +13,11 @@ public class NPC_1 extends SuperNpc {
                     getClass().getResourceAsStream("/Enemies/Skeleton.png"),
                     "Resource not found"
             ));
-            loadPlayerImages();
+            loadAnimationImages();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        setSolidArea(20, 26, 10 , 8 );
+        setSolidArea(0, 0, 10 , 8 );
     }
 
 }

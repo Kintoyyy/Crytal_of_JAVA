@@ -101,6 +101,61 @@ public class CollisionChecker {
                 if (entity.solidArea.intersects(new Rectangle(objSolidAreaX, objSolidAreaY, gp.obj[i].solidArea.width, gp.obj[i].solidArea.height))) {
                     if (gp.obj[i].collision) {
                         entity.collissionOn = true;
+                        System.out.println(gp.obj[i].name);
+                    }
+                    if (player) {
+                        index = i;
+                    }
+                }
+
+                // Reset entity's solidArea coordinates
+                entity.solidArea.x = originalSolidAreaX;
+                entity.solidArea.y = originalSolidAreaY;
+            }
+        }
+
+        return index;
+    }
+
+    public int checkNpc(Entity entity, boolean player) {
+        int index = 999;
+
+        // Store the original solid area coordinates
+        int originalSolidAreaX = entity.solidArea.x;
+        int originalSolidAreaY = entity.solidArea.y;
+
+        for (int i = 0; i < gp.npc.length; i++) {
+            if (gp.npc[i] != null) {
+
+                // Update the solidArea coordinates of the current npcect
+                int npcSolidAreaX = gp.npc[i].solidArea.x + gp.npc[i].worldX;
+                int npcSolidAreaY = gp.npc[i].solidArea.y + gp.npc[i].worldY;
+
+                // Check the entity's direction and calculate temporary coordinates
+                switch (entity.direction) {
+                    case "up":
+                        entity.solidArea.y = originalSolidAreaY - (int) entity.speed;
+                        break;
+                    case "down":
+                        entity.solidArea.y = originalSolidAreaY + (int) entity.speed;
+                        break;
+                    case "left":
+                        entity.solidArea.x = originalSolidAreaX - (int) entity.speed;
+                        break;
+                    case "right":
+                        entity.solidArea.x = originalSolidAreaX + (int) entity.speed;
+                        break;
+                }
+
+                // Update the solidArea coordinates with the npcect's position
+                entity.solidArea.x += entity.worldX;
+                entity.solidArea.y += entity.worldY;
+
+                // Check for intersection
+                if (entity.solidArea.intersects(new Rectangle(npcSolidAreaX, npcSolidAreaY, gp.npc[i].solidArea.width, gp.npc[i].solidArea.height))) {
+                    if (gp.npc[i].collision) {
+                        entity.collissionOn = true;
+                        System.out.println("NPC");
                     }
                     if (player) {
                         index = i;

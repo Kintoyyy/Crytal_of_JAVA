@@ -14,8 +14,8 @@ public class NpcSetter {
 
     public void setObject(){
         gp.npc[0] = new NPC_1();
-        gp.npc[0].worldX = 3 * gp.tileSize;
-        gp.npc[0].worldY = 3 * gp.tileSize;
+        gp.npc[0].worldX = 16 * gp.tileSize;
+        gp.npc[0].worldY = 8 * gp.tileSize;
 
 //        gp.npc[0] = new NPC_2();
 //        gp.npc[0].worldX = 3 * gp.tileSize;

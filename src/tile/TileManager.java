@@ -59,6 +59,14 @@ public class TileManager {
             tile[17] = new Tile(new TileTexture(beachTexture , 5,3).GetTileResource(1,2));
 
             tile[18] = new Tile(new TileTexture(beachTexture , 5,3).GetTileResource(2,2));
+
+            tile[19] = new Tile(new TileTexture(beachTexture , 5,3).GetTileResource(3,0));
+
+            tile[20] = new Tile(new TileTexture(beachTexture , 5,3).GetTileResource(4,0));
+
+            tile[21] = new Tile(new TileTexture(beachTexture , 5,3).GetTileResource(3,1));
+
+            tile[22] = new Tile(new TileTexture(beachTexture , 5,3).GetTileResource(4,1));
         } catch (IOException e) {
             System.err.println("Error loading tile images: " + e.getMessage());
             e.printStackTrace();

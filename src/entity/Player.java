@@ -45,8 +45,8 @@ public class Player extends Entity {
 
     private void setDefaultValues() {
         // Initial location
-        worldX = gp.tileSize * 4;
-        worldY = gp.tileSize * 5;
+        worldX = gp.tileSize * 8;
+        worldY = gp.tileSize * 8;
         speed = gp.worldWidth / 600; // Define speed
         direction = "down"; // Default direction
 
@@ -56,7 +56,7 @@ public class Player extends Entity {
 
     private void loadPlayerImages() {
         try {
-            BufferedImage spriteSheet = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/Player.png")));
+            BufferedImage spriteSheet = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/Kent.png")));
             int spriteWidth = 32;
             int spriteHeight = 32;
 
@@ -133,6 +133,8 @@ public class Player extends Entity {
         gp.collisionChecker.checkTile(this); // Check for collision with tiles
 
         int objIndex = gp.collisionChecker.checkObject(this, true);
+
+        int npcIndex = gp.collisionChecker.checkNpc(this, true);
 
 //        int objectNear = gp.collisionChecker.checkNearbyObject(this, true, 5);
 

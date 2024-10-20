@@ -13,6 +13,7 @@ public class SuperNpc {
     public int worldX, worldY;
     public Rectangle solidArea = new Rectangle(0, 0, 48, 48);
     public int SCALE = 2;
+    public boolean collision = false;
 
     public boolean moving = false;
     public int direction = 1; // 0: up, 1: down, 2: left, 3: right
@@ -29,7 +30,7 @@ public class SuperNpc {
         solidArea.height = height * SCALE;
     }
 
-    public void loadPlayerImages() {
+    public void loadAnimationImages() {
         if (spriteSheet == null) {
             System.err.println("Sprite sheet is not set.");
             return;
@@ -113,7 +114,7 @@ public class SuperNpc {
             int textX = (int) screenX;
             int textY = (int) (screenY - 5);
 
-            g2.drawString("x: " + solidArea.x + " y: " + solidArea.y, textX, textY - 30);
+            g2.drawString("solidArea:  " + solidArea.x + "x" + solidArea.y, textX, textY - 30);
             g2.drawString("size: " + scaledTileSize + "x" + scaledTileSize, textX, textY - 15);
             g2.drawString("x: " + worldX + " y: " + worldY, textX, textY);
         }
