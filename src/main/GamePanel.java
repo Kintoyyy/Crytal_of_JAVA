@@ -1,6 +1,7 @@
 package main;
 
 import entity.Player;
+import entity.SuperNpc;
 import object.SuperObject;
 import tile.TileManager;
 
@@ -37,9 +38,15 @@ public class GamePanel extends JPanel implements Runnable {
     KeyHandler keyHandler = new KeyHandler(this);
     Thread gameThread;
     public CollisionChecker collisionChecker = new CollisionChecker(this);
-    public AssetSetter assetSetter = new AssetSetter(this);
     public Player player = new Player(this,this.keyHandler);
+
+    // SET OBJECTS
+    public AssetSetter assetSetter = new AssetSetter(this);
     public SuperObject obj[] = new SuperObject[10];
+
+    // SET NPC
+    public NpcSetter npcSetter = new NpcSetter(this);
+    public SuperNpc npc[] = new SuperNpc[10];
 
 
     public GamePanel() {
@@ -52,6 +59,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void setupGame(){
         assetSetter.setObject();
+        npcSetter.setObject();
     }
 
     public void startGameThread() {
@@ -98,6 +106,12 @@ public class GamePanel extends JPanel implements Runnable {
 
         tileM.draw(g2);
 
+        for (int i = 0; i < npc.length; i++) {
+            if (npc[i] != null) {
+                npc[i].draw(g2, this);
+            }
+        }
+
         if (player.inFrontOfObject) {
             // Draw objects first, then player
             for (int i = 0; i < obj.length; i++) {
@@ -115,6 +129,8 @@ public class GamePanel extends JPanel implements Runnable {
                 }
             }
         }
+
+        player.draw(g2);
 
         g2.dispose();
     }

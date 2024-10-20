@@ -54,8 +54,6 @@ public class Player extends Entity {
         solidArea = new Rectangle(18* PLAYER_SCALE, 26* PLAYER_SCALE, 10 * PLAYER_SCALE, 8 * PLAYER_SCALE); // Center the solidArea
     }
 
-
-
     private void loadPlayerImages() {
         try {
             BufferedImage spriteSheet = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/Player.png")));
@@ -136,9 +134,9 @@ public class Player extends Entity {
 
         int objIndex = gp.collisionChecker.checkObject(this, true);
 
-        int objectNear = gp.collisionChecker.checkNearbyObject(this, true, 5);
+//        int objectNear = gp.collisionChecker.checkNearbyObject(this, true, 5);
 
-        System.out.println(objectNear);
+//        System.out.println(objectNear);
 
         if (!collissionOn) {
             handleDiagonalMovement(dx, dy); // Move if no collision
