@@ -2,35 +2,32 @@ package entity;
 
 import main.GamePanel;
 import main.KeyHandler;
-
-import javax.imageio.ImageIO;
+import object.SuperObject;
+import utils.EntityAnimation;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
+
+
 
 public class Player extends Entity {
-    private static final int FRAME_COUNT = 6; // Number of frames for animations
-    private static final float DIAGONAL_SPEED = 0.7071F; // 1 / √2
+    private static final float DIAGONAL_SPEED = 0.7571F; // 1 / √2
     private static final int PLAYER_SCALE = 2;
 
-    private GamePanel gp;
-    private KeyHandler keyHandler;
+    private final GamePanel gp;
+    private final KeyHandler keyHandler;
 
-    private int frameCounter = 0;
-    private int frameIndex = 0;
-    private int frameSpeed = 4;
-    private int idleFrameSpeed = 12;
     public boolean moving = false;
-
-    public boolean inFrontOfObject = true;
+    public boolean attacking = false;
 
     public final int screenX;
     public final int screenY;
 
-    // Store frames for each direction
-    private BufferedImage[][] frames = new BufferedImage[4][FRAME_COUNT]; // 0: up, 1: down, 2: left, 3: right
-    private BufferedImage[][] idleFrames = new BufferedImage[4][FRAME_COUNT]; // Same for idle
+    public final int SolidAreaWidth = 10 * PLAYER_SCALE;
+    public final int SolidAreaHeight = 8 * PLAYER_SCALE;
+    public final int spriteAreaSize = 32 * PLAYER_SCALE;
+
+    public EntityAnimation animation = new EntityAnimation("/player/Kent.png");
 
     public Player(GamePanel gp, KeyHandler keyHandler) {
         this.gp = gp;
@@ -38,58 +35,23 @@ public class Player extends Entity {
         this.screenX = gp.screenWidth / 2 - (gp.tileSize / 2);
         this.screenY = gp.screenHeight / 2 - (gp.tileSize / 2);
 
-//        solidArea = new Rectangle(20, 24, 8, 10);
         setDefaultValues();
-        loadPlayerImages();
+        animation.loadAnimations();
     }
 
     private void setDefaultValues() {
-        // Initial location
-        worldX = gp.tileSize * 8;
-        worldY = gp.tileSize * 8;
-        speed = gp.worldWidth / 600; // Define speed
+        worldX = gp.tileSize * 12;
+        worldY = gp.tileSize * 12;
+        speed = (double) gp.worldWidth / 600; // Define speed
+        proximityAreaRadius = 128 * PLAYER_SCALE;
+
         direction = "down"; // Default direction
 
-        // Update solidArea for the new size (assuming you are scaling by 2)
-        solidArea = new Rectangle(18* PLAYER_SCALE, 26* PLAYER_SCALE, 10 * PLAYER_SCALE, 8 * PLAYER_SCALE); // Center the solidArea
-    }
+        solidArea = new Rectangle(SolidAreaWidth, SolidAreaHeight * 2, SolidAreaWidth, SolidAreaHeight);
 
-    private void loadPlayerImages() {
-        try {
-            BufferedImage spriteSheet = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/Kent.png")));
-            int spriteWidth = 32;
-            int spriteHeight = 32;
+        spriteArea = new Rectangle(0, 0 , spriteAreaSize, spriteAreaSize);
 
-            for (int i = 0; i < FRAME_COUNT; i++) {
-                frames[0][i] = cropImage(spriteSheet, i, 5, spriteWidth, spriteHeight); // Up
-                frames[1][i] = cropImage(spriteSheet, i, 3, spriteWidth, spriteHeight); // Down
-                frames[2][i] = flipX(cropImage(spriteSheet, i, 4, spriteWidth, spriteHeight)); // Left
-                frames[3][i] = cropImage(spriteSheet, i, 4, spriteWidth, spriteHeight); // Right
-
-                idleFrames[0][i] = cropImage(spriteSheet, i, 2, spriteWidth, spriteHeight); // Idle Up
-                idleFrames[1][i] = cropImage(spriteSheet, i, 0, spriteWidth, spriteHeight); // Idle Down
-                idleFrames[2][i] = flipX(cropImage(spriteSheet, i, 1, spriteWidth, spriteHeight)); // Idle Left
-                idleFrames[3][i] = cropImage(spriteSheet, i, 1, spriteWidth, spriteHeight); // Idle Right
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private BufferedImage cropImage(BufferedImage sheet, int col, int row, int width, int height) {
-        return sheet.getSubimage(col * width, row * height, width, height);
-    }
-
-    private void updateAnimation() {
-        frameCounter++;
-        if (moving && frameCounter >= frameSpeed) {
-            frameCounter = 0;
-            frameIndex = (frameIndex + 1) % FRAME_COUNT; // Loop through frames for movement
-        } else if (!moving && frameCounter >= idleFrameSpeed) {
-            frameCounter = 0;
-            frameIndex = (frameIndex + 1) % FRAME_COUNT; // Loop through frames for idle
-        }
+        proximityArea = new Rectangle( (spriteAreaSize / 2) -(proximityAreaRadius / 2),(spriteAreaSize / 2) -(proximityAreaRadius / 2) , proximityAreaRadius, proximityAreaRadius);
     }
 
     private void handleDiagonalMovement(int dx, int dy) {
@@ -106,26 +68,31 @@ public class Player extends Entity {
         int dx = 0;
         int dy = 0;
 
-        // Check for key presses and set dx/dy accordingly
+        attacking = false;
+
         if (keyHandler.upPressed) {
-            dy -= speed;
+            dy -= (int) speed;
             moving = true;
             direction = "up";
         }
         if (keyHandler.downPressed) {
-            dy += speed;
+            dy += (int) speed;
             moving = true;
             direction = "down";
         }
         if (keyHandler.leftPressed) {
-            dx -= speed;
+            dx -= (int) speed;
             moving = true;
             direction = "left";
         }
         if (keyHandler.rightPressed) {
-            dx += speed;
+            dx += (int) speed;
             moving = true;
             direction = "right";
+        }
+
+        if (keyHandler.fPressed) {
+            attacking = true;
         }
 
         // Check for collisions before moving
@@ -134,49 +101,85 @@ public class Player extends Entity {
 
         int objIndex = gp.collisionChecker.checkObject(this, true);
 
+        int objNearby = gp.collisionChecker.checkRaduisObject(this, true);
+
         if(objIndex < 10){
             System.out.println( gp.obj[objIndex].prompts[1] );
-
         }
 
-        int npcIndex = gp.collisionChecker.checkNpc(this, true);
-//        int objectNear = gp.collisionChecker.checkNearbyObject(this, true, 5);
+        //        int objectNear = gp.collisionChecker.checkNearbyObject(this, true, 5);
 //        System.out.println(objectNear);
 
         if (!collissionOn) {
             handleDiagonalMovement(dx, dy); // Move if no collision
         }
-
-        updateAnimation(); // Update animation state
     }
 
     public void draw(Graphics2D g2) {
-        BufferedImage image;
-        int directionIndex = switch (direction) {
-            case "up" -> 0;
-            case "down" -> 1;
-            case "left" -> 2;
-            case "right" -> 3;
-            default -> throw new IllegalStateException("Unexpected value: " + direction);
-        };
 
-        image = moving ? frames[directionIndex][frameIndex] : idleFrames[directionIndex][frameIndex];
+        g2.drawImage(animation.getImage((!moving ? (attacking ? 0 : 1) : 2), direction), screenX, screenY, gp.tileSize * PLAYER_SCALE, gp.tileSize * PLAYER_SCALE, null);
 
-        // Scale the size as needed (e.g., 1.5 times the original size)
-        g2.drawImage(image, screenX, screenY, gp.tileSize * PLAYER_SCALE, gp.tileSize * PLAYER_SCALE, null); // Draw the player image with scaling
+        for(SuperObject objects : objectNearby){
+            g2.drawLine(gp.getScreenCenterX(), gp.getScreenCenterY(),objects.getCenterX(),objects.getCenterY());
+        }
+
+
+        showObjectCenter(g2, this.SolidAreaHeight, this.SolidAreaWidth);
+
+        showDisplayCenter(g2, 200);
+
+
 
         if (gp.DEBUG_MODE) { // Assuming you have a DEBUG_MODE boolean in your GamePanel
-            g2.setColor(Color.RED); // Set the border color
-            g2.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height); // Draw the solidArea
+//            g2.setColor(Color.RED); // Set the border color
+//            g2.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height); // Draw the solidArea
+
+//            g2.setColor(Color.GREEN);
+//            g2.drawRect(screenX + spriteArea.x, screenY + spriteArea.y, spriteArea.width, spriteArea.height);
+
+            g2.setColor(isNearbyObject ? Color.BLUE : Color.cyan); // Set the border color
+            g2.drawOval(screenX + proximityArea.x, screenY + proximityArea.y, proximityArea.width, proximityArea.height );
+
+
             g2.setFont(new Font("Arial", Font.BOLD, 15));
             g2.setColor(Color.WHITE);
+
+            g2.drawString("worldX: " + getCenterX() ,50,20);
+            g2.drawString("objectNearby: " + isNearbyObject,50,35);
             g2.drawString("direction: " + direction ,50,50);
-            g2.drawString("x: " + worldX + " y: " + worldY,50,65);
+            g2.drawString("worldX: " + worldX + " worldY: " + worldY,50,65);
             g2.drawString("collision: " + collissionOn,50,80);
             g2.drawString("screenX: " + screenX + " screenY" + screenY,50,95);
+
             g2.drawString("tileSize: " + gp.tileSize,50,110);
             g2.drawString("tileSize: " + solidArea,50,125);
+
+            g2.drawString("Objects Nearby: " + objectNearby,50,140);
         }
     }
 
+    private void showObjectCenter(Graphics2D g2, int height, int width) {
+        // Calculate the screen's center position based on object dimensions
+        int centerX = gp.getScreenCenterX() + (width / 2);
+        int centerY = gp.getScreenCenterY() + (height / 2);
+
+        // Set the color for the crosshair (center indicator)
+        g2.setColor(Color.YELLOW);
+
+        // Dynamically calculate the line length based on object dimensions
+        int lineLengthX = width / 4;  // Make the horizontal line 1/4th of the width
+        int lineLengthY = height / 4; // Make the vertical line 1/4th of the height
+
+        // Draw horizontal and vertical lines crossing at the object's center
+        g2.drawLine(centerX - lineLengthX, centerY, centerX + lineLengthX, centerY);  // Horizontal line
+        g2.drawLine(centerX, centerY - lineLengthY, centerX, centerY + lineLengthY);  // Vertical line
+    }
+
+
+
+    private void showDisplayCenter(Graphics2D g2, int size){
+        g2.setColor(Color.YELLOW); // Set the border color
+        g2.drawLine(gp.getScreenCenterX() - size, gp.getScreenCenterY(),gp.getScreenCenterX() + size, gp.getScreenCenterY());
+        g2.drawLine(gp.getScreenCenterX(), gp.getScreenCenterY() - size,gp.getScreenCenterX(), gp.getScreenCenterY() + size);
+    }
 }

@@ -11,8 +11,8 @@ import java.awt.*;
 public class GamePanel extends JPanel implements Runnable {
 
     // SCREEN SETTINGS
-    public final boolean DEBUG_MODE = true;
-    public final boolean ENABLE_ZOOM = false;
+    public boolean DEBUG_MODE = true;
+    public boolean ENABLE_ZOOM = false;
 
     final int ORIGINAL_TILE_SIZE = 16;
     final int MIN_TILE_SIZE = 48;
@@ -71,6 +71,13 @@ public class GamePanel extends JPanel implements Runnable {
         gameThread.start();
     }
 
+    public int getScreenCenterX(){
+        return screenWidth / 2;
+    }
+
+    public int getScreenCenterY(){
+        return screenHeight / 2;
+    }
 
 
     public void update() {

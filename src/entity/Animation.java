@@ -28,8 +28,4 @@ public class Animation {
         return frames[direction][frameIndex];
     }
 
-    public void reset() {
-        frameIndex = 0;
-        frameCounter = 0;
-    }
 }

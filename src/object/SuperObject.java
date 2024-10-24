@@ -8,11 +8,23 @@ import java.awt.image.BufferedImage;
 public class SuperObject {
     public BufferedImage image;
     public String name;
+
     public boolean collision = false;
+    public boolean isInteractable = false;
     public int worldX, worldY;
     public Rectangle solidArea = new Rectangle(0,0,48,48);
     public int SCALE = 1;
     public String[] prompts = new String[5];
+
+    public double debugDistance;
+
+    public int getCenterX(){
+        return (worldX + ( solidArea.x / 2));
+    }
+
+    public int getCenterY(){
+        return worldY + ( solidArea.y / 2);
+    }
 
     public void setSolidArea(int x, int y, int width, int height) {
         solidArea.x = x;
@@ -53,6 +65,8 @@ public class SuperObject {
             int textY = (int) (screenY - 5); // Adjust the y position to be above the object
 
             // Draw the coordinates text
+            g2.drawLine(textX, textY, textX + solidArea.width, textY);
+            g2.drawString("distance: " + debugDistance, textX, textY - 45);
             g2.drawString("x: " + solidArea.x + " y: " + solidArea.y, textX, textY - 30);
             g2.drawString("size: " + scaledTileSize + "x" + scaledTileSize, textX, textY - 15);
             g2.drawString("x: " + worldX + " y: " + worldY, textX, textY);

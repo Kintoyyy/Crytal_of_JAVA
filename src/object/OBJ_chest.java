@@ -13,5 +13,6 @@ public class OBJ_chest extends SuperObject{
             e.printStackTrace();
         }
         collision = true;
+        isInteractable = true;
     }
 }
