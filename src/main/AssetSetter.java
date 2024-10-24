@@ -23,5 +23,6 @@ public class AssetSetter {
         gp.obj[1] = new OBJ_Tree();
         gp.obj[1].worldX = 5 * gp.tileSize;
         gp.obj[1].worldY = 5 * gp.tileSize;
+        gp.obj[1] .isInteractable = true;
     }
 }

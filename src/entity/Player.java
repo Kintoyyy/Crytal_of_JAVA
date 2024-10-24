@@ -2,6 +2,7 @@ package entity;
 
 import main.GamePanel;
 import main.KeyHandler;
+import main.MouseHandler;
 import object.SuperObject;
 import utils.EntityAnimation;
 import java.awt.*;
@@ -16,12 +17,13 @@ public class Player extends Entity {
 
     private final GamePanel gp;
     private final KeyHandler keyHandler;
+    private final MouseHandler mouseHandler;
 
     public boolean moving = false;
     public boolean attacking = false;
 
-    public final int screenX;
-    public final int screenY;
+    public  int screenX;
+    public  int screenY;
 
     public final int SolidAreaWidth = 10 * PLAYER_SCALE;
     public final int SolidAreaHeight = 8 * PLAYER_SCALE;
@@ -29,11 +31,10 @@ public class Player extends Entity {
 
     public EntityAnimation animation = new EntityAnimation("/player/Kent.png");
 
-    public Player(GamePanel gp, KeyHandler keyHandler) {
+    public Player(GamePanel gp, KeyHandler keyHandler, MouseHandler mouseHandler) {
         this.gp = gp;
         this.keyHandler = keyHandler;
-        this.screenX = gp.screenWidth / 2 - (gp.tileSize / 2);
-        this.screenY = gp.screenHeight / 2 - (gp.tileSize / 2);
+        this.mouseHandler = mouseHandler;
 
         setDefaultValues();
         animation.loadAnimations();
@@ -117,34 +118,30 @@ public class Player extends Entity {
 
     public void draw(Graphics2D g2) {
 
-        g2.drawImage(animation.getImage((!moving ? (attacking ? 0 : 1) : 2), direction), screenX, screenY, gp.tileSize * PLAYER_SCALE, gp.tileSize * PLAYER_SCALE, null);
+        g2.drawImage(animation.getImage((!moving ? (attacking ? 0 : 1) : 2), direction), screenX - 64, screenY - 64, gp.tileSize * PLAYER_SCALE, gp.tileSize * PLAYER_SCALE, null);
 
         for(SuperObject objects : objectNearby){
-            g2.drawLine(gp.getScreenCenterX(), gp.getScreenCenterY(),objects.getCenterX(),objects.getCenterY());
+            g2.drawLine(screenX, screenY, objects.getCenterX(), objects.getCenterY());
         }
-
 
         showObjectCenter(g2, this.SolidAreaHeight, this.SolidAreaWidth);
 
         showDisplayCenter(g2, 200);
 
-
-
         if (gp.DEBUG_MODE) { // Assuming you have a DEBUG_MODE boolean in your GamePanel
-//            g2.setColor(Color.RED); // Set the border color
-//            g2.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height); // Draw the solidArea
+            g2.setColor(Color.RED); // Set the border color
+            g2.drawRect(screenX + solidArea.x - 32, screenY + solidArea.y - 32, solidArea.width, solidArea.height); // Draw the solidArea
 
-//            g2.setColor(Color.GREEN);
-//            g2.drawRect(screenX + spriteArea.x, screenY + spriteArea.y, spriteArea.width, spriteArea.height);
+            g2.setColor(Color.GREEN);
+            g2.drawRect(screenX + spriteArea.x - 32, screenY + spriteArea.y - 32, spriteArea.width, spriteArea.height);
 
             g2.setColor(isNearbyObject ? Color.BLUE : Color.cyan); // Set the border color
-            g2.drawOval(screenX + proximityArea.x, screenY + proximityArea.y, proximityArea.width, proximityArea.height );
+            g2.drawOval(screenX + proximityArea.x - 32, screenY + proximityArea.y - 32, proximityArea.width, proximityArea.height );
 
 
             g2.setFont(new Font("Arial", Font.BOLD, 15));
             g2.setColor(Color.WHITE);
 
-            g2.drawString("worldX: " + getCenterX() ,50,20);
             g2.drawString("objectNearby: " + isNearbyObject,50,35);
             g2.drawString("direction: " + direction ,50,50);
             g2.drawString("worldX: " + worldX + " worldY: " + worldY,50,65);
@@ -155,6 +152,7 @@ public class Player extends Entity {
             g2.drawString("tileSize: " + solidArea,50,125);
 
             g2.drawString("Objects Nearby: " + objectNearby,50,140);
+//            g2.drawString("canvasSize: " + gp.canvasSize.width + "x" + gp.canvasSize.height,50,155);
         }
     }
 
@@ -179,7 +177,7 @@ public class Player extends Entity {
 
     private void showDisplayCenter(Graphics2D g2, int size){
         g2.setColor(Color.YELLOW); // Set the border color
-        g2.drawLine(gp.getScreenCenterX() - size, gp.getScreenCenterY(),gp.getScreenCenterX() + size, gp.getScreenCenterY());
-        g2.drawLine(gp.getScreenCenterX(), gp.getScreenCenterY() - size,gp.getScreenCenterX(), gp.getScreenCenterY() + size);
+        g2.drawLine((gp.canvasSizeX / 2)- size, (gp.canvasSizeY / 2),(gp.canvasSizeX / 2)+ size, (gp.canvasSizeY / 2));
+        g2.drawLine((gp.canvasSizeX / 2), (gp.canvasSizeY / 2) - size,(gp.canvasSizeX / 2), (gp.canvasSizeY / 2) + size);
     }
 }

@@ -22,10 +22,10 @@ public class Entity {
         public String direction;
 
         public int getCenterX(){
-                return (int) (worldX + ( (double) solidArea.x / 2));
+                return (int) (worldX + ( (double) solidArea.x / 2)) - 32;
         }
 
         public int getCenterY(){
-                return (int) (worldY + ( (double) solidArea.y / 2));
+                return (int) (worldY + ( (double) solidArea.y / 2)) - 32;
         }
 }
